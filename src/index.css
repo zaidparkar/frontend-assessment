@@ -1,3 +1,31 @@
+@font-face {
+  font-family: 'Neutra Text';
+  src: url('../public/fonts/NeutraText-Book.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Neutra Text';
+  src: url('../public/fonts/NeutraText-BookItalic.ttf') format('ttf');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Neutra Text';
+  src: url('../public/fonts/NeutraText-Bold.ttf') format('ttf');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Neutra Text';
+  src: url('../public/fonts/NeutraText-BoldItalic.ttf') format('ttf');
+  font-weight: bold;
+  font-style: italic;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,4 +42,8 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.font-neutra {
+  font-weight: 700;
 }

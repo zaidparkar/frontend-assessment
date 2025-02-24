@@ -8,7 +8,6 @@ interface Product {
   price: number;
   brand: string;
   category: string;
-  // Add other fields as needed
 }
 
 interface ProductsState {
@@ -35,21 +34,21 @@ const initialState: ProductsState = {
 
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async ({ 
-    limit, 
-    skip, 
-    category 
-  }: { 
-    limit: number; 
-    skip: number; 
-    category?: string 
+  async ({
+    limit,
+    skip,
+    category
+  }: {
+    limit: number;
+    skip: number;
+    category?: string
   }) => {
     try {
       const baseUrl = 'https://dummyjson.com/products';
-      const url = category 
+      const url = category
         ? `${baseUrl}/category/${category}?limit=${limit}&skip=${skip}`
         : `${baseUrl}?limit=${limit}&skip=${skip}`;
-      
+
       const response = await axios.get(url);
       return response.data;
     } catch (error) {
@@ -103,10 +102,4 @@ const productsSlice = createSlice({
   },
 });
 
-export const { 
-  setPageSize, 
-  setSearchTerm, 
-  setCurrentPage, 
-  setSelectedCategory 
-} = productsSlice.actions;
-export default productsSlice.reducer; 
+export const { setPageSize, setSearchTerm, setCurrentPage, setSelectedCategory } = productsSlice.actions; export default productsSlice.reducer; 

@@ -77,7 +77,6 @@ const Products: React.FC = () => {
     <ErrorBoundary>
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-neutra">Products</h1>
           <select
             className="bg-custom-grey px-4 py-2 rounded-md"
             value={selectedCategory}
@@ -102,6 +101,7 @@ const Products: React.FC = () => {
           onPageChange={(page) => dispatch(setCurrentPage(page))}
           onSearch={(term) => dispatch(setSearchTerm(term))}
           isLoading={loading}
+          pageTitle="Products"
         />
       </div>
     </ErrorBoundary>

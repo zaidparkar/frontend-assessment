@@ -6,7 +6,11 @@ interface User {
   firstName: string;
   lastName: string;
   email: string;
-  // Add other fields as needed
+  birthDate: string;
+  gender: string;
+  username: string;
+  bloodGroup: string;
+  eyeColor: string;
 }
 
 interface UsersState {
@@ -17,6 +21,7 @@ interface UsersState {
   currentPage: number;
   totalPages: number;
   searchTerm: string;
+  filters: Record<string, string>;
 }
 
 const initialState: UsersState = {
@@ -26,13 +31,32 @@ const initialState: UsersState = {
   pageSize: 5,
   currentPage: 1,
   totalPages: 1,
-  searchTerm: ''
+  searchTerm: '',
+  filters: {}
 };
 
 export const fetchUsers = createAsyncThunk(
   'users/fetchUsers',
-  async ({ limit, skip }: { limit: number; skip: number }) => {
-    const response = await axios.get(`https://dummyjson.com/users?limit=${limit}&skip=${skip}`);
+  async ({ limit, skip, filters }: {
+    limit: number;
+    skip: number;
+    filters?: Record<string, string>;
+  }) => {
+    let url = 'https://dummyjson.com/users';
+    const params = new URLSearchParams();
+    params.append('limit', String(limit));
+
+    if (filters && Object.keys(filters).length > 0) {
+      url = 'https://dummyjson.com/users/filter';
+      const [[key, value]] = Object.entries(filters);
+      params.append('key', key);
+      params.append('value', value);
+      params.append('skip', String(skip));
+    } else {
+      params.append('skip', String(skip));
+    }
+
+    const response = await axios.get(`${url}?${params.toString()}`);
     return response.data;
   }
 );
@@ -43,12 +67,17 @@ const usersSlice = createSlice({
   reducers: {
     setPageSize: (state, action) => {
       state.pageSize = action.payload;
+      state.currentPage = 1;
     },
     setSearchTerm: (state, action) => {
       state.searchTerm = action.payload;
     },
     setCurrentPage: (state, action) => {
       state.currentPage = action.payload;
+    },
+    setFilters: (state, action) => {
+      state.filters = action.payload;
+      state.currentPage = 1;
     }
   },
   extraReducers: (builder) => {
@@ -68,5 +97,5 @@ const usersSlice = createSlice({
   },
 });
 
-export const { setPageSize, setSearchTerm, setCurrentPage } = usersSlice.actions;
+export const { setPageSize, setSearchTerm, setCurrentPage, setFilters } = usersSlice.actions;
 export default usersSlice.reducer; 
