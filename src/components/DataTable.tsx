@@ -41,7 +41,7 @@ const DataTable: React.FC<DataTableProps> = ({
     // Reset other filters when one is changed
     const newFilters = { [key]: value };
     setFilters(newFilters);
-    
+
     if (onFilterChange) {
       onFilterChange(key, value);
     }
@@ -55,12 +55,12 @@ const DataTable: React.FC<DataTableProps> = ({
   return (
     <div className="font-neutra">
       {/* Controls Section */}
-      <div className="flex flex-wrap justify-between items-center mb-4 gap-4 bg-white p-4 rounded-lg shadow">
+      <div className="flex flex-wrap justify-between items-center mb-6 gap-4 bg-white p-6 rounded-xl shadow-lg">
         {/* Left side controls */}
         <div className="flex items-center gap-4">
           <div className="relative">
             <select
-              className="bg-custom-grey px-4 py-2 rounded-md appearance-none cursor-pointer pr-8"
+              className="bg-custom-grey px-4 py-2.5 rounded-lg appearance-none cursor-pointer pr-10 hover:bg-custom-grey/80 transition-colors focus:outline-none focus:ring-2 focus:ring-custom-blue"
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
             >
@@ -75,10 +75,10 @@ const DataTable: React.FC<DataTableProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowSearch(!showSearch)}
-              className="text-custom-black p-2 hover:bg-custom-grey rounded-full transition-colors"
+              className="text-custom-black p-2.5 hover:bg-custom-grey rounded-lg transition-all duration-200 hover:shadow-md"
               title="Search"
             >
-              <FaSearch />
+              <FaSearch className="w-4 h-4" />
             </button>
             {showSearch && (
               <input
@@ -86,7 +86,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Search..."
-                className="border border-custom-grey px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-blue"
+                className="border border-custom-grey px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue transition-all duration-200 placeholder-gray-400"
               />
             )}
           </div>
@@ -101,46 +101,49 @@ const DataTable: React.FC<DataTableProps> = ({
               placeholder={`Filter ${column.label}...`}
               value={filters[column.key] || ''}
               onChange={(e) => handleFilterChange(column.key, e.target.value)}
-              className="border border-custom-grey px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-blue"
+              className="border border-custom-grey px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue transition-all duration-200 placeholder-gray-400"
             />
           ))}
         </div>
       </div>
 
       {/* Table Section */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
-            <thead className="bg-custom-blue">
-              <tr>
+            <thead>
+              <tr className="bg-custom-blue">
                 {columns.map((column) => (
-                  <th key={column.key} className="px-6 py-3 text-left text-custom-black">
+                  <th key={column.key} className="px-6 py-4 text-left text-custom-black font-semibold">
                     {column.label}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-custom-grey">
+            <tbody className="divide-y divide-custom-grey/30">
               {isLoading ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-6 py-4 text-center">
-                    Loading...
+                  <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500">
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-custom-blue border-t-transparent rounded-full animate-spin"></div>
+                      <span>Loading...</span>
+                    </div>
                   </td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-6 py-4 text-center">
+                  <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500">
                     No data available
                   </td>
                 </tr>
               ) : (
                 data.map((row, index) => (
-                  <tr 
+                  <tr
                     key={index}
-                    className="hover:bg-custom-grey/10 transition-colors"
+                    className="hover:bg-custom-grey/5 transition-colors duration-150"
                   >
                     {columns.map((column) => (
-                      <td key={column.key} className="px-6 py-4">
+                      <td key={column.key} className="px-6 py-4 text-custom-black/90">
                         {row[column.key]}
                       </td>
                     ))}
@@ -152,20 +155,48 @@ const DataTable: React.FC<DataTableProps> = ({
         </div>
 
         {/* Pagination Section */}
-        <div className="flex justify-center items-center gap-2 p-4 bg-white border-t border-custom-grey">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => onPageChange(i + 1)}
-              className={`px-3 py-1 rounded-md transition-colors ${
-                currentPage === i + 1 
-                  ? 'bg-custom-yellow text-custom-black' 
-                  : 'bg-custom-grey hover:bg-custom-grey/80'
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
+        <div className="flex justify-center items-center gap-2 p-6 bg-white border-t border-custom-grey/30">
+          {(() => {
+            const pages = [];
+            const maxVisiblePages = 5;
+
+            pages.push(1);
+
+            if (currentPage > maxVisiblePages - 1) {
+              pages.push('...');
+            }
+
+            for (let i = Math.max(2, currentPage - 2); i <= Math.min(totalPages - 1, currentPage + 2); i++) {
+              if (!pages.includes(i)) {
+                pages.push(i);
+              }
+            }
+
+            if (currentPage < totalPages - (maxVisiblePages - 2)) {
+              pages.push('...');
+            }
+
+            pages.push(totalPages);
+
+            return pages.map((page, index) =>
+              typeof page === 'number' ? (
+                <button
+                  key={index}
+                  onClick={() => onPageChange(page)}
+                  className={`px-4 py-2 rounded-lg transition-all duration-200 ${currentPage === page
+                      ? 'bg-custom-yellow text-custom-black shadow-md'
+                      : 'bg-custom-grey hover:bg-custom-grey/80 hover:shadow-md'
+                    }`}
+                >
+                  {page}
+                </button>
+              ) : (
+                <span key={index} className="px-2">
+                  {page}
+                </span>
+              )
+            );
+          })()}
         </div>
       </div>
     </div>
