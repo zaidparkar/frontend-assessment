@@ -14,7 +14,13 @@ const Products: React.FC = () => {
     { key: 'title', label: 'Title', filter: true },
     { key: 'description', label: 'Description' },
     { key: 'brand', label: 'Brand', filter: true },
-    { key: 'category', label: 'Category', filter: true },
+    { 
+      key: 'category', 
+      label: 'Category', 
+      filter: true,
+      filterType: 'dropdown' as const,
+      options: ['ALL', 'Laptops']
+    },
     { key: 'price', label: 'Price' }
   ];
 
@@ -22,17 +28,18 @@ const Products: React.FC = () => {
     dispatch(fetchProducts({
       limit: pageSize,
       skip: (currentPage - 1) * pageSize,
-      category: selectedCategory
+      category: selectedCategory,
+      searchTerm: searchTerm
     }));
-  }, [dispatch, pageSize, currentPage, selectedCategory]);
+  }, [dispatch, pageSize, currentPage, selectedCategory, searchTerm]);
 
-  const filteredData = searchTerm
-    ? data.filter((product) =>
-      Object.values(product).some((value) =>
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    )
-    : data;
+  const handleFilterChange = (key: string, value: string) => {
+    if (key === 'category') {
+      dispatch(setSelectedCategory(value));
+    } else {
+      dispatch(setSearchTerm(value));
+    }
+  };
 
   if (error) {
     return (
@@ -45,9 +52,8 @@ const Products: React.FC = () => {
   return (
     <ErrorBoundary>
       <div className="p-6">
-
         <DataTable
-          data={filteredData}
+          data={data}
           columns={columns}
           pageSize={pageSize}
           currentPage={currentPage}
@@ -55,6 +61,7 @@ const Products: React.FC = () => {
           onPageSizeChange={(size) => dispatch(setPageSize(size))}
           onPageChange={(page) => dispatch(setCurrentPage(page))}
           onSearch={(term) => dispatch(setSearchTerm(term))}
+          onFilterChange={handleFilterChange}
           isLoading={loading}
           pageTitle="Products"
         />

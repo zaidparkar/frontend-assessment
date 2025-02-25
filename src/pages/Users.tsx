@@ -17,7 +17,13 @@ const Users: React.FC = () => {
     { key: 'lastName', label: 'Last Name', filter: true },
     { key: 'email', label: 'Email', filter: true },
     { key: 'age', label: 'Age', filter: true },
-    { key: 'gender', label: 'Gender', filter: true },
+    {
+      key: 'gender',
+      label: 'Gender',
+      filter: true,
+      filterType: 'dropdown' as const,
+      options: ['ALL', 'male', 'female']
+    },
     { key: 'username', label: 'Username' },
     { key: 'bloodGroup', label: 'Blood Group' },
     { key: 'eyeColor', label: 'Eye Color' }

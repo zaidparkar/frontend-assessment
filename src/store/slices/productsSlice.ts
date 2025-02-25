@@ -37,17 +37,25 @@ export const fetchProducts = createAsyncThunk(
   async ({
     limit,
     skip,
-    category
+    category,
+    searchTerm
   }: {
     limit: number;
     skip: number;
-    category?: string
+    category?: string;
+    searchTerm?: string;
   }) => {
     try {
       const baseUrl = 'https://dummyjson.com/products';
-      const url = category
-        ? `${baseUrl}/category/${category}?limit=${limit}&skip=${skip}`
-        : `${baseUrl}?limit=${limit}&skip=${skip}`;
+      let url;
+
+      if (searchTerm) {
+        url = `${baseUrl}/search?q=${searchTerm}&limit=${limit}&skip=${skip}`;
+      } else if (category) {
+        url = `${baseUrl}/category/${category}?limit=${limit}&skip=${skip}`;
+      } else {
+        url = `${baseUrl}?limit=${limit}&skip=${skip}`;
+      }
 
       const response = await axios.get(url);
       return response.data;
@@ -67,6 +75,8 @@ const productsSlice = createSlice({
     },
     setSearchTerm: (state, action) => {
       state.searchTerm = action.payload;
+      state.currentPage = 1;
+      state.selectedCategory = '';
     },
     setCurrentPage: (state, action) => {
       state.currentPage = action.payload;
@@ -74,6 +84,7 @@ const productsSlice = createSlice({
     setSelectedCategory: (state, action) => {
       state.selectedCategory = action.payload;
       state.currentPage = 1;
+      state.searchTerm = '';
     }
   },
   extraReducers: (builder) => {
@@ -94,4 +105,5 @@ const productsSlice = createSlice({
   },
 });
 
-export const { setPageSize, setSearchTerm, setCurrentPage, setSelectedCategory } = productsSlice.actions; export default productsSlice.reducer; 
+export const { setPageSize, setSearchTerm, setCurrentPage, setSelectedCategory } = productsSlice.actions;
+export default productsSlice.reducer; 

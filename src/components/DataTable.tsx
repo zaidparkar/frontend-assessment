@@ -6,6 +6,8 @@ interface Column {
   key: string;
   label: string;
   filter?: boolean;
+  filterType?: 'text' | 'dropdown';
+  options?: string[];
 }
 
 interface DataTableProps {
@@ -157,13 +159,27 @@ const DataTable: React.FC<DataTableProps> = ({
                 {activeFilterDropdown === column.key && (
                   <div className="absolute z-10 mt-2 w-64 bg-white rounded-lg shadow-lg border border-custom-grey">
                     <div className="p-3">
-                      <input
-                        type="text"
-                        placeholder={`Filter ${column.label}...`}
-                        value={filters[column.key] || ''}
-                        onChange={(e) => handleFilterChange(column.key, e.target.value)}
-                        className="w-full px-3 py-2 border border-custom-grey rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue"
-                      />
+                      {column.filterType === 'dropdown' ? (
+                        <select
+                          value={filters[column.key] || ''}
+                          onChange={(e) => handleFilterChange(column.key, e.target.value)}
+                          className="w-full px-3 py-2 border border-custom-grey rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue"
+                        >
+                          {column.options?.map(option => (
+                            <option key={option} value={option === 'ALL' ? '' : option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          placeholder={`Filter ${column.label}...`}
+                          value={filters[column.key] || ''}
+                          onChange={(e) => handleFilterChange(column.key, e.target.value)}
+                          className="w-full px-3 py-2 border border-custom-grey rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue"
+                        />
+                      )}
                     </div>
                   </div>
                 )}
@@ -189,7 +205,7 @@ const DataTable: React.FC<DataTableProps> = ({
             <tbody className="divide-y divide-custom-grey/30">
               {isLoading ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500 border">
                     <div className="flex items-center justify-center space-x-2">
                       <div className="w-4 h-4 border-2 border-custom-blue border-t-transparent rounded-full animate-spin"></div>
                       <span>Loading...</span>
@@ -198,7 +214,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500 border">
                     No data available
                   </td>
                 </tr>
@@ -209,7 +225,7 @@ const DataTable: React.FC<DataTableProps> = ({
                     className="hover:bg-custom-greyDark/20 transition-colors duration-150"
                   >
                     {columns.map((column) => (
-                      <td key={column.key} className="px-6 py-4 text-custom-black/90">
+                      <td key={column.key} className="px-6 py-4 text-custom-black/90 border">
                         {row[column.key]}
                       </td>
                     ))}
