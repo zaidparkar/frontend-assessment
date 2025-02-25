@@ -5,9 +5,9 @@ interface Product {
   id: number;
   title: string;
   description: string;
-  price: number;
   brand: string;
   category: string;
+  price: number;
 }
 
 interface ProductsState {
@@ -57,21 +57,13 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
-export const fetchCategories = createAsyncThunk(
-  'products/fetchCategories',
-  async () => {
-    const response = await axios.get('https://dummyjson.com/products/categories');
-    return response.data;
-  }
-);
-
 const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
     setPageSize: (state, action) => {
       state.pageSize = action.payload;
-      state.currentPage = 1; // Reset to first page when changing page size
+      state.currentPage = 1;
     },
     setSearchTerm: (state, action) => {
       state.searchTerm = action.payload;
@@ -81,7 +73,7 @@ const productsSlice = createSlice({
     },
     setSelectedCategory: (state, action) => {
       state.selectedCategory = action.payload;
-      state.currentPage = 1; // Reset to first page when changing category
+      state.currentPage = 1;
     }
   },
   extraReducers: (builder) => {

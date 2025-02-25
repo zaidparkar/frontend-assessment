@@ -1,68 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store/store';
-import { 
-  fetchProducts, 
-  fetchCategories,
-  setPageSize, 
-  setSearchTerm, 
-  setCurrentPage,
-  setSelectedCategory 
-} from '../store/slices/productsSlice';
+import { fetchProducts, setPageSize, setSearchTerm, setCurrentPage, setSelectedCategory } from '../store/slices/productsSlice';
 import DataTable from '../components/DataTable';
 import ErrorBoundary from '../components/ErrorBoundary';
 
 const Products: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { 
-    data, 
-    loading, 
-    error,
-    pageSize, 
-    currentPage, 
-    totalPages, 
-    searchTerm,
-    selectedCategory 
-  } = useSelector((state: RootState) => state.products);
-  const [categories, setCategories] = useState<string[]>([]);
+  const { data, loading, error, pageSize, currentPage, totalPages, searchTerm, selectedCategory } = useSelector((state: RootState) => state.products);
 
   const columns = [
     { key: 'id', label: 'ID' },
     { key: 'title', label: 'Title', filter: true },
     { key: 'description', label: 'Description' },
-    { key: 'price', label: 'Price', filter: true },
     { key: 'brand', label: 'Brand', filter: true },
-    { key: 'category', label: 'Category' },
-    { key: 'stock', label: 'Stock' },
-    { key: 'rating', label: 'Rating' }
+    { key: 'category', label: 'Category', filter: true },
+    { key: 'price', label: 'Price' }
   ];
 
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const response = await dispatch(fetchCategories()).unwrap();
-        setCategories(response);
-      } catch (error) {
-        console.error('Failed to load categories:', error);
-      }
-    };
-    loadCategories();
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(fetchProducts({ 
-      limit: pageSize, 
+    dispatch(fetchProducts({
+      limit: pageSize,
       skip: (currentPage - 1) * pageSize,
-      category: selectedCategory 
+      category: selectedCategory
     }));
   }, [dispatch, pageSize, currentPage, selectedCategory]);
 
   const filteredData = searchTerm
     ? data.filter((product) =>
-        Object.values(product).some((value) =>
-          String(value).toLowerCase().includes(searchTerm.toLowerCase())
-        )
+      Object.values(product).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
       )
+    )
     : data;
 
   if (error) {
@@ -76,20 +45,6 @@ const Products: React.FC = () => {
   return (
     <ErrorBoundary>
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <select
-            className="bg-custom-grey px-4 py-2 rounded-md"
-            value={selectedCategory}
-            onChange={(e) => dispatch(setSelectedCategory(e.target.value))}
-          >
-            <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
 
         <DataTable
           data={filteredData}
