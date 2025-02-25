@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaFilter } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 interface Column {
@@ -39,18 +39,17 @@ const DataTable: React.FC<DataTableProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [debouncedFilters, setDebouncedFilters] = useState<Record<string, string>>({});
+  const [activeFilterDropdown, setActiveFilterDropdown] = useState<string | null>(null);
   const pageSizeOptions = [5, 10, 20, 50];
 
-  // Debounce filter changes
   useEffect(() => {
     const timer = setTimeout(() => {
       if (JSON.stringify(filters) !== JSON.stringify(debouncedFilters)) {
         setDebouncedFilters(filters);
-        Object.entries(filters).forEach(([key, value]) => {
-          if (onFilterChange) {
-            onFilterChange(key, value);
-          }
-        });
+        if (Object.keys(filters).length > 0 && onFilterChange) {
+          const [[key, value]] = Object.entries(filters);
+          onFilterChange(key, value);
+        }
       }
     }, 500);
 
@@ -58,13 +57,29 @@ const DataTable: React.FC<DataTableProps> = ({
   }, [filters, debouncedFilters, onFilterChange]);
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    const newFilters = value ? { [key]: value } : {};
+    setFilters(newFilters);
   };
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     onSearch(value);
   };
+
+  const toggleFilterDropdown = (key: string) => {
+    setActiveFilterDropdown(activeFilterDropdown === key ? null : key);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeFilterDropdown && !(event.target as Element).closest('.filter-dropdown')) {
+        setActiveFilterDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [activeFilterDropdown]);
 
   return (
     <div className="font-neutra">
@@ -124,14 +139,31 @@ const DataTable: React.FC<DataTableProps> = ({
 
           <div className="flex flex-wrap gap-4">
             {columns.filter(col => col.filter).map(column => (
-              <input
-                key={column.key}
-                type="text"
-                placeholder={`Filter ${column.label}...`}
-                value={filters[column.key] || ''}
-                onChange={(e) => handleFilterChange(column.key, e.target.value)}
-                className="border border-custom-grey px-4 py-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue transition-all duration-200 placeholder-gray-400 w-40"
-              />
+              <div key={column.key} className="relative filter-dropdown">
+                <button
+                  onClick={() => toggleFilterDropdown(column.key)}
+                  className={`flex items-center gap-2 px-4 py-1.5 rounded-lg border transition-all duration-200
+                    ${filters[column.key] ? 'bg-custom-blue border-custom-blueDark' : 'border-custom-grey hover:bg-custom-grey'}
+                  `}
+                >
+                  <FaFilter className="w-3 h-3" />
+                  <span>{column.label}</span>
+                </button>
+
+                {activeFilterDropdown === column.key && (
+                  <div className="absolute z-10 mt-2 w-64 bg-white rounded-lg shadow-lg border border-custom-grey">
+                    <div className="p-3">
+                      <input
+                        type="text"
+                        placeholder={`Filter ${column.label}...`}
+                        value={filters[column.key] || ''}
+                        onChange={(e) => handleFilterChange(column.key, e.target.value)}
+                        className="w-full px-3 py-2 border border-custom-grey rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </div>

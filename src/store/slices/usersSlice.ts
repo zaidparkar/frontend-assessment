@@ -6,7 +6,7 @@ interface User {
   firstName: string;
   lastName: string;
   email: string;
-  birthDate: string;
+  age: string;
   gender: string;
   username: string;
   bloodGroup: string;
@@ -45,15 +45,15 @@ export const fetchUsers = createAsyncThunk(
     let url = 'https://dummyjson.com/users';
     const params = new URLSearchParams();
     params.append('limit', String(limit));
+    params.append('skip', String(skip));
 
     if (filters && Object.keys(filters).length > 0) {
-      url = 'https://dummyjson.com/users/filter';
       const [[key, value]] = Object.entries(filters);
-      params.append('key', key);
-      params.append('value', value);
-      params.append('skip', String(skip));
-    } else {
-      params.append('skip', String(skip));
+      if (value && value.trim()) {
+        url = 'https://dummyjson.com/users/filter';
+        params.append('key', key);
+        params.append('value', value);
+      }
     }
 
     const response = await axios.get(`${url}?${params.toString()}`);

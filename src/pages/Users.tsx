@@ -16,7 +16,7 @@ const Users: React.FC = () => {
     { key: 'firstName', label: 'First Name', filter: true },
     { key: 'lastName', label: 'Last Name', filter: true },
     { key: 'email', label: 'Email', filter: true },
-    { key: 'birthDate', label: 'Birth Date', filter: true },
+    { key: 'age', label: 'Age', filter: true },
     { key: 'gender', label: 'Gender', filter: true },
     { key: 'username', label: 'Username' },
     { key: 'bloodGroup', label: 'Blood Group' },
@@ -24,31 +24,28 @@ const Users: React.FC = () => {
   ];
 
   useEffect(() => {
-    dispatch(fetchUsers({ 
-      limit: pageSize, 
+    dispatch(fetchUsers({
+      limit: pageSize,
       skip: (currentPage - 1) * pageSize,
       filters: activeFilters
     }));
   }, [dispatch, pageSize, currentPage, activeFilters]);
 
   const handleFilterChange = (key: string, value: string) => {
-    setActiveFilters(prev => {
-      const newFilters = { ...prev };
-      if (value) {
-        newFilters[key] = value;
-      } else {
-        delete newFilters[key];
-      }
-      return newFilters;
-    });
+    if (value.trim()) {
+      setActiveFilters({ [key]: value });
+    } else {
+      setActiveFilters({});
+    }
+    dispatch(setCurrentPage(1));
   };
 
   const filteredData = searchTerm
     ? data.filter((user) =>
-        Object.values(user).some((value) =>
-          String(value).toLowerCase().includes(searchTerm.toLowerCase())
-        )
+      Object.values(user).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
       )
+    )
     : data;
 
   return (
