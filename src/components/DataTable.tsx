@@ -59,6 +59,10 @@ const DataTable: React.FC<DataTableProps> = ({
   const handleFilterChange = (key: string, value: string) => {
     const newFilters = value ? { [key]: value } : {};
     setFilters(newFilters);
+
+    if (!value && onFilterChange) {
+        onFilterChange(key, '');
+    }
   };
 
   const handleSearch = (value: string) => {

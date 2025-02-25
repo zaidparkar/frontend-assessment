@@ -36,6 +36,11 @@ const Users: React.FC = () => {
       setActiveFilters({ [key]: value });
     } else {
       setActiveFilters({});
+      dispatch(fetchUsers({
+        limit: pageSize,
+        skip: (currentPage - 1) * pageSize,
+        filters: {}
+      }));
     }
     dispatch(setCurrentPage(1));
   };
