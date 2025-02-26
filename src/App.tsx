@@ -5,7 +5,7 @@ import Products from './pages/Products';
 
 const App: React.FC = () => {
   return (
-    <Router>
+    <Router basename="/frontend-assessment">
       <div className="min-h-screen bg-custom-grey">
         <nav className="bg-custom-black p-4">
           <div className="container mx-auto flex gap-5">
