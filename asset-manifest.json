@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/frontend-assessment/static/css/main.ee20e83b.css",
-    "main.js": "/frontend-assessment/static/js/main.fb90c99d.js",
+    "main.js": "/frontend-assessment/static/js/main.fd3f0b15.js",
     "static/media/NeutraText-BookItalic.ttf": "/frontend-assessment/static/media/NeutraText-BookItalic.4b0ccd1517874a27ebf1.ttf",
     "static/media/NeutraText-Book.ttf": "/frontend-assessment/static/media/NeutraText-Book.1a593c4a81aff5b51961.ttf",
     "static/media/NeutraText-BoldItalic.ttf": "/frontend-assessment/static/media/NeutraText-BoldItalic.5953e7ccbccbfba2629f.ttf",
     "static/media/NeutraText-Bold.ttf": "/frontend-assessment/static/media/NeutraText-Bold.01f9048a90e56a0539c3.ttf",
     "index.html": "/frontend-assessment/index.html",
     "main.ee20e83b.css.map": "/frontend-assessment/static/css/main.ee20e83b.css.map",
-    "main.fb90c99d.js.map": "/frontend-assessment/static/js/main.fb90c99d.js.map"
+    "main.fd3f0b15.js.map": "/frontend-assessment/static/js/main.fd3f0b15.js.map"
   },
   "entrypoints": [
     "static/css/main.ee20e83b.css",
-    "static/js/main.fb90c99d.js"
+    "static/js/main.fd3f0b15.js"
   ]
 }
